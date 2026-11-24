@@ -2,7 +2,7 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import { env as nodeEnv } from "process";
-import { readdirSync, readFileSync } from "fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "fs";
 import { createRequire } from "module";
 import { defineConfig, loadEnv, type Plugin } from "vite";
 
@@ -22,6 +22,31 @@ function pdfjsStandardFonts(): Plugin {
     },
     generateBundle() {
       for (const file of readdirSync(dir)) this.emitFile({ type: "asset", fileName: `${prefix.slice(1)}${file}`, source: readFileSync(path.join(dir, file)) });
+    },
+  };
+}
+
+/**
+ * The Compendium of Lore's data from a folder outside the app (LORE_DIR, set by the Aspire AppHost), served at
+ * /lore-data/ like nginx does in the Docker install. Dev server only; without LORE_DIR, public/lore-data is used.
+ * Outside public/ so Vite's watcher does not hold the files the Compendium builder renames into place on Windows.
+ */
+function loreData(): Plugin {
+  const root = nodeEnv.LORE_DIR ? path.resolve(nodeEnv.LORE_DIR) : undefined;
+  return {
+    name: "lore-data",
+    configureServer(server) {
+      if (!root) return;
+      server.middlewares.use("/lore-data/", (req, res, next) => {
+        const file = path.resolve(root, "." + decodeURIComponent((req.url ?? "").split("?")[0]));
+        if (!file.startsWith(root + path.sep) || !existsSync(file) || !statSync(file).isFile()) {
+          res.statusCode = 404;
+          return res.end();
+        }
+        res.setHeader("Content-Type", file.endsWith(".json") ? "application/json" : "application/octet-stream");
+        res.setHeader("Cache-Control", "no-cache");
+        res.end(readFileSync(file));
+      });
     },
   };
 }
@@ -58,7 +83,7 @@ export default defineConfig(({ mode }) => {
   console.log("================================");
 
   return {
-    plugins: [react(), tailwindcss(), pdfjsStandardFonts()],
+    plugins: [react(), tailwindcss(), pdfjsStandardFonts(), loreData()],
     resolve: {
       tsconfigPaths: true,
       alias: {

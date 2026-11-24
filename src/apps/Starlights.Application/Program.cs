@@ -151,6 +151,11 @@ public sealed partial class Program
             });
         }
 
+        // before the access checks below: CORS answers the browser's preflight (OPTIONS) itself, which would otherwise
+        // count as an admin write under /api/elements, and adds its headers to their 401/403 answers (development only:
+        // outside it the policy allows no other origin)
+        app.UseCors();
+
         // content administration (initialize, the Aurora import, creating/editing/deleting elements) needs the
         // admin key; players only ever read elements. There are no accounts, so without this any player could
         // wipe the content. With no key configured these requests are refused.
@@ -198,7 +203,6 @@ public sealed partial class Program
 
         // configure the platform and its modules
         app.UseStarlightsPlatform();
-        app.UseCors();
 
         // only when this process serves HTTPS itself (the "https" launch profile): behind the reverse proxy
         // (deploy/: plain HTTP on 8080) there is no HTTPS port to redirect to, and the middleware only logged

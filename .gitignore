@@ -455,6 +455,9 @@ starlights-lore/
 # the self-hosting kit's content and data (deploy/setup.sh)
 deploy/data/
 
+# the Aspire AppHost's local content, homebrew and portraits (docs/dev-local-setup.md)
+/.devdata/
+
 # Isolated frontend tooling and synthetic validation artifacts
 /.tooling/
 /.artifacts/

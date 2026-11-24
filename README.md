@@ -271,7 +271,8 @@ Needs the .NET 10 SDK, Node.js 22.19+ (or a supported Node.js 24) and Docker. Th
 `Starlights.slnx` in Visual Studio with `Starlights.AppHost` as the startup project (`https` profile) and press F5, or
 run `aspire run` ([aspire.dev](https://aspire.dev)) in the repository root. It starts SQL Server in a container, applies
 the migrations, and runs the API, the web app and the Aspire dashboard; run the API's **Initialize Database** action
-in the dashboard once.
+in the dashboard once. On Windows with an installed SQL Server and the real content, see
+[docs/dev-local-setup.md](docs/dev-local-setup.md).
 
 ### Tests
 
