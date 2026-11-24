@@ -38,7 +38,9 @@ aspire run          # from the repository root; https profile, opens the dashboa
 
 The AppHost (`src/aspire/Starlights.AppHost/AppHost.cs`) runs the two migration workers, then the API with the
 development content settings (`Content:SelfManaged=true`, `Elements:SampleContent=false`, and the folders below), then
-the Vite apps. The URLs of each app are in the dashboard.
+the builder app (`app-character-builder`, the whole Starfall site). Its URL is in the dashboard. The landing-page,
+content-manager and showcase apps are early scaffolds and are not started; to run one by hand, build the shared
+packages first (`npm run build:packages` in `src/frontend`), since they import `ui-framework` from its `dist/`.
 
 | What | Where |
 |---|---|

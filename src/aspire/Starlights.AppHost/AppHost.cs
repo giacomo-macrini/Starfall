@@ -69,32 +69,13 @@ if (builder.ExecutionContext.IsRunMode)
     application.WaitForCompletion(characters);
 }
 
+// the web app: builder-app is the whole Starfall site (the only app the Docker install serves). The landing-page,
+// content-manager and showcase apps are early Starlights scaffolds Starfall doesn't use, so they are not started
 if (builder.ExecutionContext.IsRunMode)
 {
-    builder.AddJavaScriptApp("app-landing-page", "../../frontend/apps/landing-page", "dev")
-        .WithEnvironment("BROWSER", "none")
-        .WithHttpEndpoint(env: "PORT")
-        .WithExternalHttpEndpoints()
-        .WithReference(application)
-        .WaitFor(application);
-
     builder.AddJavaScriptApp("app-character-builder", "../../frontend/apps/builder-app", "dev")
         //.WithEnvironment("BROWSER", "none")
         .WithEnvironment("LORE_DIR", loreData)
-        .WithHttpEndpoint(env: "PORT")
-        .WithExternalHttpEndpoints()
-        .WithReference(application)
-        .WaitFor(application);
-
-    builder.AddJavaScriptApp("app-content-manager", "../../frontend/apps/content-manager", "dev")
-        .WithEnvironment("BROWSER", "none")
-        .WithHttpEndpoint(env: "PORT")
-        .WithExternalHttpEndpoints()
-        .WithReference(application)
-        .WaitFor(application);
-
-    builder.AddJavaScriptApp("app-showcase", "../../frontend/apps/showcase", "dev")
-        .WithEnvironment("BROWSER", "none")
         .WithHttpEndpoint(env: "PORT")
         .WithExternalHttpEndpoints()
         .WithReference(application)
